@@ -14,7 +14,9 @@
     "react": "^16.12.0",
     "react-base-table": "^1.9.1",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.1"
+    "react-icons": "^4.1.0",
+    "react-scripts": "3.4.1",
+    "react-texty": "^0.6.0"
   },
   "scripts": {
     "start": "react-scripts start",

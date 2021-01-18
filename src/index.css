@@ -37,3 +37,8 @@ body {
 #root {
   height: 100%;
 }
+
+.ContainerTable {
+  width: calc(80vw + 220px);
+  height: 100vh;
+}

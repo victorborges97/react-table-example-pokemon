@@ -1,61 +1,61 @@
-import React,{useState, useEffect, memo} from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { Table, Column } from './components/table';
-import pokedex from './pokedex';
+import BaseTable, { AutoResizer, SortOrder } from 'react-base-table';
+import 'react-base-table/styles.css';
+import dataFire from './data';
 import columnDefinition from './column-definition';
-import createPokedex from './utils/create-pokedex';
+import Empty from './components/table/empty';
+import Loader from './components/table/loader';
 
-const dataTable = createPokedex(pokedex);
-
-const handleOnColumnSort = (data, setData, setSortBy) => ({key, order}) =>{
-  const dataSorted = [...data].sort((a, b) => order==='asc' ? a[key] - b[key] : b[key] - a[key]);
-  setSortBy({key, order});
-  setData([...dataSorted]);
-}
-
-const handleOnClickRow = (setSelectedRow) => ({ rowKey }) => {
-  setSelectedRow(rowKey)
-}
-
-const handleOnDoubleClickRow = data => console.log(data);
-
-const addClassNameRow = selectedRow => ({ rowData }) => {
-  const { id } = rowData;
-  const hasEqualRow = selectedRow === id;
-  return hasEqualRow && 'active';
-};
+import './index.css';
 
 const App = () => {
   const [data, setData] = useState([]);
-  const [sortBy, setSortBy] = useState({key:'id', order: 'asc'});
+  const [sortBy, setSortBy] = useState({ key: 'name', order: SortOrder.ASC });
   const [loading, setLoad] = useState(true);
-  const [selectedRow, setSelectedRow] = useState(null);
-  useEffect(()=>{
-    const timer = setTimeout(()=>{
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const defaultData = dataFire.sort((a, b) => (a.disciplina > b.disciplina ? 1 : -1))
+      console.log(defaultData)
       setLoad(false);
-      setData(dataTable)
-    },1000)
+      setData(dataFire)
+    }, 1000)
     return () => {
       clearTimeout(timer);
     }
-  },[])
+  }, [])
+
+  const onColumnSort = sortBy => {
+    const order = sortBy.order === SortOrder.ASC ? 1 : -1
+    // eslint-disable-next-line no-use-before-define
+    const dataOrd = [...data]
+    dataOrd.sort((a, b) => (a[sortBy.key] > b[sortBy.key] ? order : -order))
+    setSortBy(sortBy);
+    setData(dataOrd);
+  }
+
 
   return (
-    <Table 
-      data={data} 
-      loading={loading}
-      rowKey="id"
-      headerHeight={45}
-      rowHeight={70}
-      sortBy={sortBy} 
-      onColumnSort={handleOnColumnSort(data, setData, setSortBy)}
-      onClickRow={handleOnClickRow(setSelectedRow)}
-      onDoubleClickRow={handleOnDoubleClickRow}
-      rowClassName={addClassNameRow(selectedRow)}
-    >
-      {columnDefinition.map(({dataKey, ...restProps}) => (
-        <Column key={dataKey} dataKey={dataKey} {...restProps} />
-      ))}
-    </Table>
+    <div className="ContainerTable">
+      <AutoResizer>
+        {({ width, height }) => (
+          <BaseTable
+            fixed
+            emptyRenderer={<Empty loading={loading} />}
+            overlayRenderer={<Loader loading={loading} />}
+            columns={columnDefinition}
+            headerHeight={35}
+            rowHeight={35}
+            height={height}
+            width={width}
+            data={data}
+            sortBy={sortBy}
+            onColumnSort={onColumnSort}
+          />
+        )}
+      </AutoResizer>
+    </div>
   );
 }
 

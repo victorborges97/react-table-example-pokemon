@@ -5,7 +5,7 @@ import BaseTable, { AutoResizer } from 'react-base-table';
 import 'react-base-table/styles.css';
 import Empty from './empty';
 import Loader from './loader';
-import components from './components';
+import TableCell from './TableCell';
 import { Content } from './style';
 
 
@@ -22,6 +22,7 @@ const Table = ({
   onDoubleClickRow,
   rowClassName
 }) => {
+
   return (
     <Content>
       <AutoResizer>
@@ -37,7 +38,7 @@ const Table = ({
             rowHeight={rowHeight}
             rowClassName={rowClassName}
             rowKey={rowKey}
-            components={components}
+            components={{ TableCell }}
             sortBy={sortBy}
             onColumnSort={onColumnSort}
             rowEventHandlers={{
@@ -65,7 +66,6 @@ Table.propTypes = {
   onClickRow: PropTypes.func,
   onDoubleClickRow: PropTypes.func,
   rowClassName: PropTypes.func
-
 }
 
 Table.defaultProps = {
